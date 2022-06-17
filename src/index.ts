@@ -8,7 +8,7 @@ import {
   TerriaPluginContext,
   UserDrawing,
   Workbench
-} from "terriajs-plugin-api";
+} from "leylinesjs-plugin-api";
 import cubeIcon from "assets/icons/cube.svg";
 import BoxDrawingCatalogItem from "./BoxDrawingCatalogItem";
 

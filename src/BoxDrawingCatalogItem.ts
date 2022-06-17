@@ -23,7 +23,7 @@ import {
   Terria,
   ViewingControl,
   ViewState
-} from "terriajs-plugin-api";
+} from "leylinesjs-plugin-api";
 import EditBoxTransformWorkflow from "./EditBoxTransformWorkflow";
 import BoxDrawingCatalogItemTraits, {
   DimensionsTraits

@@ -1,5 +1,5 @@
 {
-  "name": "terriajs-plugin-sample",
+  "name": "leylinesjs-plugin-sample",
   "version": "0.0.1-alpha.5",
   "description": "A sample terriajs plugin.",
   "module": "dist/index.js",
@@ -8,7 +8,7 @@
   "license": "Apache-2.0",
   "prepare": "rollup -c rollup.config.ts",
   "dependencies": {
-    "terriajs-plugin-api": "0.0.1-alpha.4"
+    "leylinesjs-plugin-api": "https://github.com/leylines/leylinesjs-plugin-api"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.1.3",

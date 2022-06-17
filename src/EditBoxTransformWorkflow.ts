@@ -3,7 +3,7 @@ import {
   Icon,
   SelectableDimensionGroup,
   SelectableDimensionWorkflow
-} from "terriajs-plugin-api";
+} from "leylinesjs-plugin-api";
 import BoxDrawingCatalogItem from "./BoxDrawingCatalogItem";
 
 /**

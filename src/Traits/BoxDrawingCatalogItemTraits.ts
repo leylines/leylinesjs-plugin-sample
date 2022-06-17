@@ -10,7 +10,7 @@ import {
   objectTrait,
   primitiveTrait,
   updateModelFromJson
-} from "terriajs-plugin-api";
+} from "leylinesjs-plugin-api";
 
 export class DimensionsTraits extends ModelTraits {
   @primitiveTrait({
