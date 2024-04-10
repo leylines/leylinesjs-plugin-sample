@@ -1,21 +1,41 @@
-# What?
+# TerriaJS sample plugin
 
-This repo implements a sample TerriaJS plugin. It uses the experimental [terriajs-plugin-api](https://github.com/terriajs/plugin-api) to interface with the TerriaJS library.
+This repository implements a sample TerriaJS plugin. The plugin implements a
+custom tool for drawing an interactive 3D box on the map. It serves as an
+example for setting up an loading an external plugin library that adds some new
+functionality to Terria without forking it.
 
-Terria plugins simply provide a means of building functionality for Terria outside of the main TerriaJS library. The additional functionality can be support for a new data source by implementing a new [catalog item type](https://docs.terria.io/guide/connecting-to-data/catalog-items/). Or it can add a new feature to Terria by implementing a new UI [workflow](#workflow-tbd)(TBD).
+Plugins allow extending Terria in two ways:
 
-# Current status
+  - By adding support for new data formats or APIs through implementing new [catalog item ](https://docs.terria.io/guide/connecting-to-data/catalog-items/) types. 
+  - and extending the UI in limited ways to create custom workflows.
 
-* The repo builds without errors inside a yarn workspace within the terriamap repo ([details on how to setup the workspace](#suggested-plugin-development-workflow)).
+This plugin code utilizes these additional peer dependencies from the TerriaJS
+library and are pre-requisites for understanding the code:
 
-* Outside a yarn workspace, the project builds and emits types but with errors. The errors are because the current TerriaJS bundle does not emit and export its types. (issue tracking this problem).
+- [terriajs-plugin-api](https://github.com/terriajs/plugin-api) - for interfacing with the TerriaJS library.
+- [CesiumJS](https://github.com/cesiumgs/cesium/) - The 3D mapping library
+- [mobx](https://mobx.js.org/) - Reactive state management library
+- [ReactJS](https://react.dev/)
+- [styled-components](https://styled-components.com/)
+- [yarn](yarnpkg.com) - Package manager
 
-# TODOs
 
-- [x] Packaging icon asset files.
-- [ ] Adding translation support
+Additional documentation for developing with terria is available at
+[https://docs.terria.io](https://docs.terria.io/). You can also reach us through our [discussion forum](https://github.com/TerriaJS/terriajs/discussions) if you require additional help.
 
-# Adding this plugin to your terriamap
+
+This plugin repository is a work in progress and will be updated as the different
+APIs evolve. Meanwhile expect breaking changes 👷
+
+### Current status
+- [x] Load external plugins in TerriaJS at build time
+- [x] Support for registering custom data types (aka catalog items)
+- [x] Initial, limited support for extending UI to add custom workflows
+- [ ] Testing
+- [ ] Linting
+
+# Adding the plugin to your terriamap
 
 ### Clone terriamap
 ```bash
@@ -23,42 +43,54 @@ git clone https://github.com/terriajs/terriamap
 cd terriamap
 ```
 
-### Add this plugin as dependency to package.json
+### Add this plugin as dependency in package.json
 ```bash
 yarn add -W 'terriajs-plugin-sample'
 ```
 
-### Add plugin to `plugins.ts`
+### Add it to the plugin registry file `plugins.ts`
 ```typescript
 const plugins: any[] = [
   import("terriajs-plugin-sample")
 ];
-
+...
 export default plugins;
 ```
 
 Note: The file `plugins.ts` is in the terriamap project root directory.
 
-### Now build terriamap and start the server
+### Now build your terriamap and start the server
 
 ```
 # From the terriamap directory run
-yarn run gulp build
-# Start terriamap web server
-yarn run start
+yarn run gulp dev
 ```
 
-Once the server is running visit http://localhost:3001 to load the app. You should see a new plugin button to draw a 3D box on the right hand side of the app.
+Once the server is running visit http://localhost:3001 to load the app. You should see a new plugin button added to the map toolbar on the right hand side. Opening the tool will prompt the user to draw a rectangle on the map, this will place a 3d box of the same dimension on the map. Screenshot of the plugin in action:
 
-# Suggested plugin development workflow
+![Sample plugin](sample-plugin.png "Sample plugin")
 
-We currently suggest using yarn workspaces to develop plugins for terriamap. Follow these steps to to setup a yarn workspace for this plugin:
+# Plugin development workflow
 
-### Checkout the plugin into packages folder
+This section assumes you have completed the steps for [adding the plugin to your terriamap](#adding-the-plugin-to-your-terriamap).
+
+Developing the plugin requires correctly setting up the yarn workspace. Your local directory structure should look something like:
+```
+terriamap/
+  packages/
+  ├── plugin-sample
+  └── terriajs
+```
+
+The `terriajs` and  `plugin-sample` repositories must be checked out under `terriamap/packages/` folder
+
+
+### Checkout terriajs and sample-plugin into the packages folder
 
 ```bash
 cd terriamap/
 mkdir -p packages
+git clone https://github.com/terriajs/terriajs packages/terriajs
 git clone https://github.com/terriajs/plugin-sample packages/plugin-sample
 ```
 
@@ -80,19 +112,18 @@ Edit `package.json` for terriamap:
    ...
    
    "dependencies": {
-    "pm2": "^3.2.2",
-    "terriajs-plugin-api": "0.0.1-alpha.5",
-    "terriajs-plugin-sample": "0.0.1-alpha.6", // <-- plugin-sample version changed to match the version in packages/plugin-sample/package.json
+    "terriajs-plugin-api": "0.0.1-alpha.16",
+    "terriajs-plugin-sample": "0.0.1-alpha.8", // <-- plugin-sample version should match the version in packages/plugin-sample/package.json
 ```
 
 ### Build terriamap 
 
-From your terriamap folder run:
+From your `terriamap` folder run:
 
 ```bash
 yarn install
-# Starts a terriamap build process that watches for file changes
-yarn run gulp watch 
+# Starts a terriamap dev server that watches for code changes and rebuilds the map
+yarn run gulp dev
 ```
 
 ### Build plugin-sample
@@ -100,7 +131,11 @@ yarn run gulp watch
 ```bash
 cd terriamap/packages/plugin-sample
 # Start a plugin build process that watches for file changes
-rollup -c rollup.config.ts -w
+yarn run watch
 ```
 
-Now when you make changes to the plugin code, terriamap will automatically rebuild the changes.
+Note: you need to keep both the yarn commands running, then start making make changes to the plugin code, terriamap will automatically
+rebuild your changes. 
+
+Watch for errors from the plugin build process. Note that the app page doesn't reload automatically when the code rebuilds, you
+have to refresh the page to see your changes.
